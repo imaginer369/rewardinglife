@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Management</title>
+    <link rel="icon" type="image/png" href="icons/trophy.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <div id="password-container">
+        <h2>Enter Password</h2>
+        <div id="icon-selector" class="hidden">
+            <label>
+                <input type="radio" name="icon" value="rose" checked>
+                <img src="icons/rose.png" alt="Rose Icon">
+            </label>
+            <label>
+                <input type="radio" name="icon" value="soldier">
+                <img src="icons/soldier.png" alt="Soldier Icon">
+            </label>
+        </div>
+        <input type="password" id="password-input" placeholder="Password">
+        <button id="submit-password">Unlock</button>
+        <p id="error-message"></p>
+    </div>
+
+    <div id="dashboard-container" class="hidden">
+        <h1>Rewarding Life</h1>
+        <div id="user-cards-container">
+            <!-- User cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- The Add Points Modal -->
+    <div id="add-points-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modal-title">Add Points</h3>
+            <div class="update-container">
+                <label>Local Points to Add:</label>
+                <input type="number" id="modal-local-points" value="0">
+            </div>
+            <div class="update-container">
+                <label>Global Points to Add:</label>
+                <input type="number" id="modal-global-points" value="0">
+            </div>
+            <div class="update-container reason-container">
+                <label>Reason (How were these earned?):</label>
+                <input type="text" id="modal-reason" placeholder="e.g., Completed weekly challenge">
+            </div>
+            <button id="modal-submit-button" class="update-button">Add</button>
+        </div>
+    </div>
+
+    <!-- The Redeem Points Modal -->
+    <div id="redeem-points-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="redeem-modal-title">Redeem Points</h3>
+            <div class="update-container">
+                <label>Local Points to Redeem:</label>
+                <input type="number" id="redeem-modal-local-points" value="0">
+            </div>
+            <div class="update-container">
+                <label>Global Points to Redeem:</label>
+                <input type="number" id="redeem-modal-global-points" value="0">
+            </div>
+            <div class="update-container reason-container">
+                <label>Reason (What were these used for?):</label>
+                <input type="text" id="redeem-modal-reason" placeholder="e.g., Bought a coffee">
+            </div>
+            <button id="redeem-modal-submit-button" class="update-button">Redeem</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
