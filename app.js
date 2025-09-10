@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardContainer = document.getElementById('dashboard-container');
     const passwordInput = document.getElementById('password-input');
     const submitButton = document.getElementById('submit-password');
+    const logoutButton = document.getElementById('logout-button');
     const errorMessage = document.getElementById('error-message');
     const userCardsContainer = document.getElementById('user-cards-container');
 
@@ -31,6 +32,63 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPassword = null;
     let usersData = null;
 
+    // --- INITIALIZATION ---
+    function init() {
+        const session = getSession();
+        if (session) {
+            loadSession(session);
+        } else {
+            passwordContainer.classList.remove('hidden');
+        }
+    }
+
+    // --- SESSION MANAGEMENT ---
+    function getSession() {
+        const sessionJSON = localStorage.getItem('rewardingLifeSession');
+        try {
+            return JSON.parse(sessionJSON);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function saveSession() {
+        const session = {
+            password: currentPassword,
+            loggedInUser: loggedInUser,
+            usersData: usersData,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('rewardingLifeSession', JSON.stringify(session));
+    }
+
+    function clearSession() {
+        localStorage.removeItem('rewardingLifeSession');
+        loggedInUser = null;
+        currentPassword = null;
+        usersData = null;
+    }
+
+    function loadSession(session) {
+        // Optional: Check session timestamp if you want sessions to expire
+        // const MAX_SESSION_AGE = 1000 * 60 * 60 * 24; // 24 hours
+        // if (Date.now() - session.timestamp > MAX_SESSION_AGE) {
+        //     clearSession();
+        //     passwordContainer.classList.remove('hidden');
+        //     return;
+        // }
+
+        currentPassword = session.password;
+        loggedInUser = session.loggedInUser;
+        usersData = session.usersData;
+
+        passwordContainer.classList.add('hidden');
+        dashboardContainer.classList.remove('hidden');
+        logoutButton.classList.remove('hidden');
+        displayUsers(usersData);
+    }
+
+
     // --- EVENT LISTENERS ---
 
     // 1. Handle Login
@@ -51,10 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.error) { throw new Error(data.error); }
                 errorMessage.textContent = '';
-                passwordContainer.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
                 usersData = data;
-                displayUsers(usersData);
+                
+                saveSession(); // Save session on successful login
+                loadSession(getSession()); // Load the new session into the UI
+
             })
             .catch(error => {
                 console.error('Error fetching initial data:', error);
@@ -62,7 +121,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    // 2. Handle Card Button Clicks (Event Delegation)
+    // 2. Handle Logout
+    logoutButton.addEventListener('click', () => {
+        clearSession();
+        dashboardContainer.classList.add('hidden');
+        logoutButton.classList.add('hidden');
+        passwordContainer.classList.remove('hidden');
+        passwordInput.value = '';
+        errorMessage.textContent = '';
+    });
+
+
+    // 3. Handle Card Button Clicks (Event Delegation)
     userCardsContainer.addEventListener('click', (event) => {
         const userCard = event.target.closest('.user-card');
         if (!userCard) return;
@@ -98,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Handle ADDING Points (Modal Submission)
+    // 4. Handle ADDING Points (Modal Submission)
     addModalSubmitButton.addEventListener('click', () => {
         const username = addModal.dataset.username;
         const currentLocal = parseInt(addModal.dataset.currentLocal, 10);
@@ -120,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sendUpdateRequest(username, reason, newLocalTotal, newGlobalTotal, addModalSubmitButton, 'Add');
     });
 
-    // 4. Handle REDEEMING Points (Modal Submission)
+    // 5. Handle REDEEMING Points (Modal Submission)
     redeemModalSubmitButton.addEventListener('click', () => {
         const username = redeemModal.dataset.username;
         const currentLocal = parseInt(redeemModal.dataset.currentLocal, 10);
@@ -147,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sendUpdateRequest(username, reason, newLocalTotal, newGlobalTotal, redeemModalSubmitButton, 'Redeem');
     });
 
-    // 5. Generic API Update Function
+    // 6. Generic API Update Function
     function sendUpdateRequest(username, reason, newLocal, newGlobal, submitButton, actionText) {
         submitButton.disabled = true;
         submitButton.textContent = 'Processing...';
@@ -176,6 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     userToUpdate.current_global_points = newGlobal;
                 }
 
+                // Update session data and UI
+                saveSession();
                 displayUsers(usersData);
 
                 addModal.style.display = 'none';
@@ -195,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 6. Handle Modal Closing
+    // 7. Handle Modal Closing
     [addModal, redeemModal].forEach(modal => {
         const closeButton = modal.querySelector('.close-button');
         closeButton.addEventListener('click', () => { modal.style.display = 'none'; });
@@ -230,4 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             userCardsContainer.appendChild(card);
         });
     }
+
+    // --- START THE APP ---
+    init();
 });

@@ -88,6 +88,17 @@ button:hover {
     margin-top: 1em;
 }
 
+#logout-button {
+    position: absolute;
+    top: 2em;
+    right: 2em;
+    background-color: #ef4444;
+}
+
+#logout-button:hover {
+    background-color: #dc2626;
+}
+
 .hidden {
     display: none;
 }
