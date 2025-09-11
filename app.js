@@ -36,7 +36,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         const session = getSession();
         if (session) {
-            loadSession(session);
+            // Always fetch latest data from server, even if session exists
+            passwordContainer.classList.add('hidden');
+            dashboardContainer.classList.remove('hidden');
+            logoutButton.classList.remove('hidden');
+            errorMessage.textContent = 'Loading latest data...';
+            fetch(APP_SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) { throw new Error(data.error); }
+                    usersData = data;
+                    saveSession();
+                    loadSession(getSession());
+                    errorMessage.textContent = '';
+                })
+                .catch(error => {
+                    console.error('Error fetching latest data:', error);
+                    errorMessage.textContent = 'Could not load latest data.';
+                });
         } else {
             passwordContainer.classList.remove('hidden');
         }
