@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
     const errorMessage = document.getElementById('error-message');
     const userCardsContainer = document.getElementById('user-cards-container');
+    const loadingSpinner = document.getElementById('loading-spinner');
 
     // --- ADD MODAL ELEMENTS ---
     const addModal = document.getElementById('add-points-modal');
@@ -70,14 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadSession(session) {
-        // Optional: Check session timestamp if you want sessions to expire
-        // const MAX_SESSION_AGE = 1000 * 60 * 60 * 24; // 24 hours
-        // if (Date.now() - session.timestamp > MAX_SESSION_AGE) {
-        //     clearSession();
-        //     passwordContainer.classList.remove('hidden');
-        //     return;
-        // }
-
         currentPassword = session.password;
         loggedInUser = session.loggedInUser;
         usersData = session.usersData;
@@ -102,22 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        errorMessage.textContent = 'Loading...';
+        errorMessage.textContent = '';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
 
         fetch(APP_SCRIPT_URL)
             .then(response => response.json())
             .then(data => {
                 if (data.error) { throw new Error(data.error); }
-                errorMessage.textContent = '';
                 usersData = data;
-                
-                saveSession(); // Save session on successful login
-                loadSession(getSession()); // Load the new session into the UI
-
+                saveSession();
+                loadSession(getSession());
             })
             .catch(error => {
                 console.error('Error fetching initial data:', error);
                 errorMessage.textContent = 'Could not load data. Check the script URL and sheet permissions.';
+            })
+            .finally(() => {
+                loadingSpinner.classList.add('hidden');
+                submitButton.disabled = false;
             });
     });
 
@@ -131,8 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.textContent = '';
     });
 
+    // ... (rest of the event listeners and functions remain the same) ...
 
-    // 3. Handle Card Button Clicks (Event Delegation)
+        // 3. Handle Card Button Clicks (Event Delegation)
     userCardsContainer.addEventListener('click', (event) => {
         const userCard = event.target.closest('.user-card');
         if (!userCard) return;
