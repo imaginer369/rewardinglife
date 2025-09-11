@@ -32,6 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPassword = null;
     let usersData = null;
 
+    // --- LOADING ANIMATION HELPERS ---
+    function showLoading() {
+        const loadingAnimation = document.getElementById('loading-animation');
+        if (loadingAnimation) loadingAnimation.classList.remove('hidden');
+    }
+    function hideLoading() {
+        const loadingAnimation = document.getElementById('loading-animation');
+        if (loadingAnimation) loadingAnimation.classList.add('hidden');
+    }    
+    
+
     // --- INITIALIZATION ---
     function init() {
         const session = getSession();
@@ -40,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
             logoutButton.classList.remove('hidden');
-            loadingAnimation.classList.remove('hidden');
+            showLoading();
             fetch(APP_SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
@@ -52,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(error => {
                     console.error('Error fetching latest data:', error);
-                    loadingAnimation.classList.add('hidden');
+                    hideLoading();
                 });
         } else {
             passwordContainer.classList.remove('hidden');
@@ -104,11 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutButton.classList.remove('hidden');
         displayUsers(usersData);
 
-        // Hide loading animation after points are rendered
-        const loadingAnimation = document.getElementById('loading-animation');
-        if (loadingAnimation) {
-            loadingAnimation.classList.add('hidden');
-        }
+        hideLoading();
     }
 
 
@@ -152,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordContainer.classList.remove('hidden');
         passwordInput.value = '';
         errorMessage.textContent = '';
+        hideLoading();
     });
 
 
@@ -323,6 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             userCardsContainer.appendChild(card);
+            hideLoading();
         });
     }
 
