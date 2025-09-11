@@ -103,6 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardContainer.classList.remove('hidden');
         logoutButton.classList.remove('hidden');
         displayUsers(usersData);
+
+        // Hide loading animation after points are rendered
+        const loadingAnimation = document.getElementById('loading-animation');
+        if (loadingAnimation) {
+            loadingAnimation.classList.add('hidden');
+        }
     }
 
 
