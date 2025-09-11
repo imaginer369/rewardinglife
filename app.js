@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALIZATION ---
     function init() {
         const session = getSession();
+        const loadingAnimation = document.getElementById('loading-animation');
         if (session) {
-            // Always fetch latest data from server, even if session exists
             passwordContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
             logoutButton.classList.remove('hidden');
-            errorMessage.textContent = 'Loading latest data...';
+            loadingAnimation.classList.remove('hidden');
             fetch(APP_SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
@@ -48,11 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     usersData = data;
                     saveSession();
                     loadSession(getSession());
-                    errorMessage.textContent = '';
+                    loadingAnimation.classList.add('hidden');
                 })
                 .catch(error => {
                     console.error('Error fetching latest data:', error);
-                    errorMessage.textContent = 'Could not load latest data.';
+                    loadingAnimation.classList.add('hidden');
                 });
         } else {
             passwordContainer.classList.remove('hidden');
