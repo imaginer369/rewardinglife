@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             userCardsContainer.appendChild(card);
-            hideLoading();
+        
         });
     }
 
