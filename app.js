@@ -32,40 +32,52 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPassword = null;
     let usersData = null;
 
-    // --- LOADING ANIMATION HELPERS ---
-    function showLoading() {
-        const loadingAnimation = document.getElementById('loading-animation');
-        if (loadingAnimation) loadingAnimation.classList.remove('hidden');
-    }
-    function hideLoading() {
-        const loadingAnimation = document.getElementById('loading-animation');
-        if (loadingAnimation) loadingAnimation.classList.add('hidden');
-    }    
     
 
     // --- INITIALIZATION ---
     function init() {
         const session = getSession();
-        const loadingAnimation = document.getElementById('loading-animation');
-        if (session) {
+        // Removed console.log for production cleanliness
+        if (session && session.password) {
             passwordContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
             logoutButton.classList.remove('hidden');
-            showLoading();
-            fetch(APP_SCRIPT_URL)
+            // Removed console.log for production cleanliness
+            fetch(`${APP_SCRIPT_URL}?password=${encodeURIComponent(session.password)}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.error) { throw new Error(data.error); }
+                    if (data.status === 'error' || data.error) {
+                        // Only clear session if error is authentication-related
+                        if ((data.message && data.message.toLowerCase().includes('invalid password')) ||
+                            (data.error && data.error.toLowerCase().includes('invalid password'))) {
+                            clearSession();
+                            passwordContainer.classList.remove('hidden');
+                            dashboardContainer.classList.add('hidden');
+                            logoutButton.classList.add('hidden');
+                            errorMessage.textContent = data.message || data.error || 'Session expired. Please log in again.';
+                        } else {
+                            // For other errors, keep session and show error
+                            errorMessage.textContent = data.message || data.error || 'Could not load data. Try again.';
+                        }
+                        return;
+                    }
                     usersData = data;
-                    saveSession();
+                    const newSession = {
+                        password: session.password,
+                        loggedInUser: session.loggedInUser,
+                        usersData: usersData,
+                        timestamp: Date.now()
+                    };
+                    saveSession(newSession);
                     loadSession(getSession());
-                    loadingAnimation.classList.add('hidden');
                 })
                 .catch(error => {
                     console.error('Error fetching latest data:', error);
-                    hideLoading();
+                    // Do NOT clear session for network/server errors
+                    errorMessage.textContent = 'Could not load data. Please check your connection and try again.';
                 });
         } else {
+            // Removed console.log for production cleanliness
             passwordContainer.classList.remove('hidden');
         }
     }
@@ -80,17 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function saveSession() {
-        const session = {
-            password: currentPassword,
-            loggedInUser: loggedInUser,
-            usersData: usersData,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('rewardingLifeSession', JSON.stringify(session));
+    function saveSession(session) {
+    // Removed console.log for production cleanliness
+    localStorage.setItem('rewardingLifeSession', JSON.stringify(session));
     }
 
     function clearSession() {
+        // Removed console.log for production cleanliness
         localStorage.removeItem('rewardingLifeSession');
         loggedInUser = null;
         currentPassword = null;
@@ -115,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutButton.classList.remove('hidden');
         displayUsers(usersData);
 
-        hideLoading();
+        
     }
 
 
@@ -132,18 +140,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        errorMessage.textContent = 'Loading...';
+        errorMessage.textContent = '';
 
-        fetch(APP_SCRIPT_URL)
+        // Send password as query param for authentication
+        fetch(`${APP_SCRIPT_URL}?password=${encodeURIComponent(password)}`)
             .then(response => response.json())
             .then(data => {
-                if (data.error) { throw new Error(data.error); }
-                errorMessage.textContent = '';
+                if (data.status === 'error' || data.error) {
+                    errorMessage.textContent = data.message || data.error || 'Invalid password.';
+                    return;
+                }
                 usersData = data;
-                
-                saveSession(); // Save session on successful login
-                loadSession(getSession()); // Load the new session into the UI
-
+                const session = {
+                    password: password,
+                    loggedInUser: loggedInUser,
+                    usersData: usersData,
+                    timestamp: Date.now()
+                };
+                saveSession(session);
+                loadSession(getSession());
             })
             .catch(error => {
                 console.error('Error fetching initial data:', error);
@@ -159,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordContainer.classList.remove('hidden');
         passwordInput.value = '';
         errorMessage.textContent = '';
-        hideLoading();
+        
     });
 
 
@@ -278,7 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Update session data and UI
-                saveSession();
+                const session = {
+                    password: currentPassword,
+                    loggedInUser: loggedInUser,
+                    usersData: usersData,
+                    timestamp: Date.now()
+                };
+                saveSession(session);
                 displayUsers(usersData);
 
                 addModal.style.display = 'none';
