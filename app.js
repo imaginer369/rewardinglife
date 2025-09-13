@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- LOADING ANIMATION HELPERS ---
+    function showLoading() {
+        let loader = document.getElementById('loading-spinner');
+        if (loader) loader.classList.remove('hidden');
+    }
+    function hideLoading() {
+        let loader = document.getElementById('loading-spinner');
+        if (loader) loader.classList.add('hidden');
+    }
     // --- CONFIGURATION ---
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwm4eiWDbmMxGADofaJCkjV0V7F3KgL3PfE-QeYwhaEexl9G_5uQhIu63R_FrXUZmIZA/exec';
 
@@ -31,18 +40,30 @@ document.addEventListener('DOMContentLoaded', () => {
     let loggedInUser = null;
     let currentPassword = null;
     let usersData = null;
+    // --- USER SELECTION STATE ---
+    let selectedUser = null;
 
-    
+    const userSelectContainer = document.getElementById('user-select-container');
+    const loginUserCards = userSelectContainer ? userSelectContainer.querySelectorAll('.login-user-card') : [];
+    // --- USER SELECTION LOGIC ---
+    if (loginUserCards && loginUserCards.length) {
+        loginUserCards.forEach(card => {
+            card.addEventListener('click', () => {
+                loginUserCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedUser = card.dataset.username;
+            });
+        });
+    }
 
     // --- INITIALIZATION ---
     function init() {
         const session = getSession();
-        // Removed console.log for production cleanliness
         if (session && session.password) {
+            showLoading();
             passwordContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
             logoutButton.classList.remove('hidden');
-            // Removed console.log for production cleanliness
             fetch(`${APP_SCRIPT_URL}?password=${encodeURIComponent(session.password)}`)
                 .then(response => response.json())
                 .then(data => {
@@ -59,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             // For other errors, keep session and show error
                             errorMessage.textContent = data.message || data.error || 'Could not load data. Try again.';
                         }
+                        hideLoading();
                         return;
                     }
                     usersData = data;
@@ -70,14 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     saveSession(newSession);
                     loadSession(getSession());
+                    hideLoading();
                 })
                 .catch(error => {
                     console.error('Error fetching latest data:', error);
                     // Do NOT clear session for network/server errors
                     errorMessage.textContent = 'Could not load data. Please check your connection and try again.';
+                    hideLoading();
                 });
         } else {
-            // Removed console.log for production cleanliness
             passwordContainer.classList.remove('hidden');
         }
     }
@@ -117,7 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPassword = session.password;
         loggedInUser = session.loggedInUser;
         usersData = session.usersData;
-
+        // Set selected user visually if on login screen
+        if (userSelectContainer && loggedInUser) {
+            const cards = userSelectContainer.querySelectorAll('.login-user-card');
+            cards.forEach(card => {
+                if (card.dataset.username === loggedInUser) {
+                    card.classList.add('selected');
+                    selectedUser = loggedInUser;
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
         passwordContainer.classList.add('hidden');
         dashboardContainer.classList.remove('hidden');
         logoutButton.classList.remove('hidden');
@@ -132,15 +166,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Handle Login
     submitButton.addEventListener('click', () => {
         const password = passwordInput.value;
-        loggedInUser = 'rose'; // Default user
+        // Use selected user
+        loggedInUser = selectedUser;
         currentPassword = password;
 
+        if (!selectedUser) {
+            errorMessage.textContent = 'Please select a user.';
+            return;
+        }
         if (!password) {
             errorMessage.textContent = 'Please enter the password.';
             return;
         }
 
         errorMessage.textContent = '';
+        passwordInput.disabled = true;
+        submitButton.disabled = true;
+        showLoading();
 
         // Send password as query param for authentication
         fetch(`${APP_SCRIPT_URL}?password=${encodeURIComponent(password)}`)
@@ -148,6 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.status === 'error' || data.error) {
                     errorMessage.textContent = data.message || data.error || 'Invalid password.';
+                    passwordInput.disabled = false;
+                    submitButton.disabled = false;
+                    hideLoading();
                     return;
                 }
                 usersData = data;
@@ -163,6 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error('Error fetching initial data:', error);
                 errorMessage.textContent = 'Could not load data. Check the script URL and sheet permissions.';
+                passwordInput.disabled = false;
+                submitButton.disabled = false;
+            })
+            .finally(() => {
+                hideLoading();
+                passwordInput.disabled = false;
+                submitButton.disabled = false;
             });
     });
 

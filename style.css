@@ -1,3 +1,318 @@
+
+@media (max-width: 600px) {
+    #logout-button {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+        max-width: 32px !important;
+        max-height: 32px !important;
+        font-size: 1em !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+    }
+    #logout-button .logout-icon {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 1em !important;
+    }
+}
+@media (max-width: 600px) {
+    #logout-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        max-width: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 50%;
+        background: #3498db;
+        color: #fff;
+        font-size: 1.5em;
+        box-shadow: 0 2px 8px 0 rgba(52,152,219,0.10);
+        padding: 0;
+        margin: 0 0 8px 0;
+        border: none;
+    }
+    #logout-button .logout-text {
+        display: none;
+    }
+    #logout-button .logout-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+    #logout-button:active {
+        background: #217dbb;
+        box-shadow: 0 1px 4px 0 rgba(52,152,219,0.13);
+    }
+}
+@media (max-width: 600px) {
+    #logout-button {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto 8px auto;
+        border-radius: 8px;
+        background: #3498db;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.08em;
+        letter-spacing: 0.01em;
+        box-shadow: 0 2px 8px 0 rgba(52,152,219,0.10);
+        padding: 12px 0;
+        transition: background 0.18s, box-shadow 0.18s;
+    }
+    #logout-button:active {
+        background: #217dbb;
+        box-shadow: 0 1px 4px 0 rgba(52,152,219,0.13);
+    }
+}
+/* Dashboard Title and Layout */
+/* Dashboard header layout for desktop */
+#dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 10px;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+#dashboard-title {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 2em;
+    font-weight: 700;
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 50%, #1fa2ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 2px #fff, 0 0.5px 0 #e0e0e0;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 600px) {
+    #dashboard-header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-bottom: 10px;
+        width: 100%;
+        min-width: 0;
+    }
+    #dashboard-title {
+        font-size: 1.15em;
+        margin-bottom: 0;
+        flex: none;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        width: 100%;
+    }
+    #logout-button {
+        flex: none;
+        margin: 0 auto 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+@media (max-width: 600px) {
+    #dashboard-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+        width: 100%;
+        min-width: 0;
+    }
+    #dashboard-title {
+        font-size: 1.15em;
+        margin-bottom: 0;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #logout-button {
+        flex: 0 0 auto;
+        margin-left: 8px;
+    }
+}
+@media (max-width: 600px) {
+    #dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    #dashboard-title {
+        font-size: 1.35em;
+        margin-bottom: 2px;
+    }
+    #logout-button {
+        align-self: flex-end;
+        font-size: 1em;
+        padding: 6px 16px;
+    }
+    #user-cards-container {
+        margin-top: 0;
+    }
+}
+@media (max-width: 600px) {
+    body {
+        padding: 0;
+        font-size: 1em;
+    }
+    #password-container, #dashboard-container {
+        max-width: 98vw;
+        margin: 24px 1vw;
+        padding: 18px 6vw;
+        border-radius: 10px;
+        box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    }
+    #user-select-container {
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+    }
+    .login-user-card {
+        min-width: 0;
+        width: 90vw;
+        max-width: 320px;
+        padding: 10px 0 6px 0;
+    }
+    .login-user-icon {
+        width: 48px;
+        height: 48px;
+    }
+    .login-username {
+        font-size: 1em;
+        padding: 2px 8px 1px 8px;
+    }
+    input[type="password"], button {
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .modal-content {
+        width: 98vw;
+        max-width: 98vw;
+        margin: 18% auto;
+        padding: 18px 6vw;
+    }
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 8px;
+    }
+    .user-icon {
+        width: 38px;
+        height: 38px;
+    }
+    .button-group {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+}
+/* Login User Selection */
+.login-user-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 16px 6px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    transition: border 0.18s, box-shadow 0.18s, background 0.18s, transform 0.18s;
+    box-shadow: 0 1px 6px rgba(52,152,219,0.06);
+    min-width: 90px;
+    user-select: none;
+}
+.login-user-card.selected {
+    border: 2.5px solid #3498db;
+    background: #f4faff;
+    box-shadow: 0 4px 18px 0 rgba(52,152,219,0.18);
+    transform: scale(1.12);
+    z-index: 1;
+}
+.login-user-card:active {
+    transform: scale(1.07);
+    box-shadow: 0 2px 8px 0 rgba(52,152,219,0.13);
+}
+.login-user-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    border: 2.5px solid #f1c40f;
+    background: transparent;
+    object-fit: cover;
+    box-shadow: none;
+}
+.login-username {
+    margin-top: 2px;
+    font-size: 1.08em;
+    font-weight: 600;
+    color: #1a232b;
+    background: rgba(255,255,255,0.82);
+    border-radius: 6px;
+    padding: 2px 10px 1px 10px;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 2px #fff, 0 0.5px 0 #e0e0e0;
+    box-shadow: 0 1px 2px rgba(52,152,219,0.04);
+}
+/* Loading Spinner Styles */
+.loading-spinner {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.85);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+.spinner {
+    width: 64px;
+    height: 64px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-bottom: 6px solid #f1c40f;
+    border-radius: 50%;
+    box-shadow: 0 0 18px 2px #3498db44, 0 0 12px 2px #f1c40f44;
+    animation: spin 1s linear infinite, glowPulse 1.2s ease-in-out infinite alternate;
+    background: transparent;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 18px 2px #3498db44, 0 0 12px 2px #f1c40f44; }
+    100% { box-shadow: 0 0 32px 6px #3498db66, 0 0 24px 6px #f1c40f66; }
+}
+.hidden {
+    display: none !important;
+}
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #1a1a2e;
